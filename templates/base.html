@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags for responsiveness -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="John Mugendi Kinyua">
+    
+    <!-- Google Fonts for elegant typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Source+Sans+Pro:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom CSS  -->
+    <link rel="stylesheet" href="/static/css/newspaper-style.css">
+    
+    <title>{% block title %}Newspaper App | The Daily Chronicle{% endblock title %}</title>
+</head>
+<body>
+    <!-- Header with newspaper name and date -->
+    <header class="newspaper-header">
+        <div class="container">
+            <div class="header-top">
+                <div class="header-date" id="currentDate"></div>
+                <div class="edition-badge">EST. 2026</div>
+            </div>
+            
+            <div class="logo-container">
+                <h1 class="newspaper-logo">
+                    <span class="logo-main">THE DAILY</span>
+                    <span class="logo-sub">CHRONICLE</span>
+                </h1>
+                <p class="logo-tagline">"Truth Through Journalism"</p>
+            </div>
+            
+            <div class="weather-widget">
+                <i class="fas fa-cloud-sun"></i>
+                <span>24°C · Nairobi</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="main-navigation" id="mainNav">
+        <div class="container">
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item active">
+                    <a href="{% url 'home' %}"><i class="fas fa-home"></i> HOME</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fas fa-globe"></i> WORLD</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fas fa-landmark"></i> POLITICS</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fas fa-chart-line"></i> BUSINESS</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fas fa-microchip"></i> TECH</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fas fa-flask"></i> SCIENCE</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fas fa-futbol"></i> SPORTS</a>
+                </li>
+            </ul>
+            
+            <div class="search-icon">
+                <i class="fas fa-search" id="searchToggle"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search Bar (Hidden by default) -->
+    <div class="search-bar" id="searchBar">
+        <div class="container">
+            <input type="text" placeholder="Search for news, articles, topics...">
+            <button><i class="fas fa-search"></i> SEARCH</button>
+        </div>
+    </div>
+
+    <!-- User Navigation Bar - FIXED AUTHENTICATED AREA -->
+    <div class="user-nav">
+        <div class="container">
+            <div class="user-nav-content">
+                <div class="welcome-message">
+                    <i class="far fa-newspaper"></i>
+                    <span>Your trusted news source since 2026</span>
+                </div>
+                
+                <div class="user-actions">
+                    {% if user.is_authenticated %}
+                    <!-- New Article Button for authenticated users -->
+                    <a href="{% url 'article_new' %}" class="new-article-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>NEW ARTICLE</span>
+                    </a>
+                    
+                    <!-- User Dropdown Menu -->
+                    <div class="user-dropdown">
+                        <button class="dropdown-btn" id="userDropdownBtn">
+                            <i class="far fa-user-circle"></i>
+                            <span>{{ user.username }}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" id="userDropdownMenu">
+                            <a href="{% url 'password_change' %}">
+                                <i class="fas fa-key"></i> Change Password
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <!-- Logout form - properly styled -->
+                            <form method="post" action="{% url 'logout' %}" class="logout-form">
+                                {% csrf_token %}
+                                <button type="submit" class="logout-btn">
+                                    <i class="fas fa-sign-out-alt"></i> Log Out
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Login and Signup for non-authenticated users -->
+                    <a href="{% url 'login' %}" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>LOG IN</span>
+                    </a>
+                    <a href="{% url 'signup' %}" class="signup-btn">
+                        <i class="fas fa-user-plus"></i>
+                        <span>SIGN UP</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breaking News Ticker -->
+    <div class="breaking-ticker">
+        <div class="container">
+            <div class="ticker-label">
+                <i class="fas fa-bolt"></i> BREAKING
+            </div>
+            <div class="ticker-content" id="tickerContent">
+                <span>Global summit addresses climate change • </span>
+                <span>Tech stocks reach all-time high • </span>
+                <span>Local hero saves family from fire • </span>
+                <span>New medical breakthrough announced • </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="container">
+            {% block content %}
+            <!-- Sample content to demonstrate styling -->
+            <div class="featured-story">
+                <div class="featured-label">FEATURED STORY</div>
+                <h2 class="featured-title">Global Leaders Unite for Historic Climate Action Summit</h2>
+                <div class="featured-meta">
+                    <span><i class="far fa-user"></i> By Sarah Johnson</span>
+                    <span><i class="far fa-clock"></i> 2 hours ago</span>
+                    <span><i class="far fa-folder"></i> World News</span>
+                </div>
+                <p class="featured-excerpt">In a landmark gathering at the United Nations headquarters, world leaders from over 100 nations have committed to unprecedented climate action measures. The summit, hailed as a turning point in global environmental policy, aims to reduce carbon emissions by 50% before 2030.</p>
+                <a href="#" class="read-more">Continue Reading <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="article-grid">
+                <article class="article-card">
+                    <div class="card-category">Technology</div>
+                    <h3><a href="#">Revolutionary AI Model Promises to Transform Healthcare</a></h3>
+                    <p>New artificial intelligence system can detect diseases with 99% accuracy...</p>
+                    <div class="card-footer">
+                        <span><i class="far fa-clock"></i> 3 hours ago</span>
+                    </div>
+                </article>
+
+                <article class="article-card">
+                    <div class="card-category">Business</div>
+                    <h3><a href="#">Markets Surge as Inflation Shows Signs of Cooling</a></h3>
+                    <p>Global markets respond positively to latest economic indicators...</p>
+                    <div class="card-footer">
+                        <span><i class="far fa-clock"></i> 5 hours ago</span>
+                    </div>
+                </article>
+
+                <article class="article-card">
+                    <div class="card-category">Sports</div>
+                    <h3><a href="#">Local Team Makes Historic Championship Run</a></h3>
+                    <p>Underdogs defeat defending champions in stunning upset...</p>
+                    <div class="card-footer">
+                        <span><i class="far fa-clock"></i> 6 hours ago</span>
+                    </div>
+                </article>
+            </div>
+            {% endblock content %}
+        </div>
+    </main>
+
+    <!-- Footer with my signature -->
+    <footer class="newspaper-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>About Us</h4>
+                    <p>The Daily Chronicle delivers accurate, unbiased news to millions of readers worldwide. Our commitment to journalistic excellence spans decades of trusted reporting.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Sections</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Politics</a></li>
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Technology</a></li>
+                        <li><a href="#">Science</a></li>
+                        <li><a href="#">Health</a></li>
+                        <li><a href="#">Sports</a></li>
+                        <li><a href="#">Arts</a></li>
+                        <li><a href="#">Opinion</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Advertise</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Use</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Newsletter</h4>
+                    <p>Get daily news delivered to your inbox</p>
+                    <form class="footer-newsletter" id="newsletterForm">
+                        <input type="email" placeholder="Your email address" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                    
+                    <!-- My Signature -->
+                    <div class="publisher-signature">
+                        <span class="signature-label">PUBLISHED BY</span>
+                        <div class="signature-name">JOHN MUGENDI KINYUA</div>
+                        <span class="signature-title">Editor-in-Chief & Founder</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <i class="far fa-copyright"></i> 2026 The Daily Chronicle. All rights reserved.
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacy</a>
+                    <span>•</span>
+                    <a href="#">Terms</a>
+                    <span>•</span>
+                    <a href="#">Sitemap</a>
+                    <span>•</span>
+                    <a href="#">Accessibility</a>
+                </div>
+            </div>
+            
+            <!-- My credit line -->
+            <div class="designer-credit">
+                <span>Designed with <i class="fas fa-heart"></i> by John Mugendi Kinyua</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Custom JavaScript -->
+    <script src="/static/js/newspaper-script.js"></script>
+</body>
+</html>

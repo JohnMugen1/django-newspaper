@@ -1,0 +1,455 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Create New Article {% endblock title %}
+
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/article_new.css' %}">
+
+
+<div class="new-article-wrapper">
+  <div class="new-article-container">
+    <!-- Creative Header -->
+    <div class="creation-header">
+      <div class="floating-elements">
+        <div class="floating-element floating-1">✎</div>
+        <div class="floating-element floating-2">📝</div>
+        <div class="floating-element floating-3">✨</div>
+        <div class="floating-element floating-4">🎨</div>
+        <div class="floating-element floating-5">📚</div>
+        <div class="floating-element floating-6">💡</div>
+      </div>
+      
+      <div class="header-content">
+        <div class="creation-badge">
+          <span class="badge-icon">✨</span>
+          <span class="badge-text">New Creation</span>
+        </div>
+        
+        <h1 class="creation-title">
+          <span class="title-word">Share</span>
+          <span class="title-word">Your</span>
+          <span class="title-word">Story</span>
+        </h1>
+        
+        <p class="creation-subtitle">
+          Every great article starts with a single word. Let your creativity flow!
+        </p>
+        
+        <div class="inspiration-quote">
+          <svg class="quote-icon" viewBox="0 0 24 24" width="20" height="20">
+            <path fill="currentColor" d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/>
+          </svg>
+          <span>The art of writing is the art of discovering what you believe.</span>
+        </div>
+      </div>
+      
+      <div class="header-stats">
+        <div class="stat-item">
+          <span class="stat-value">∞</span>
+          <span class="stat-label">Possibilities</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">✎</span>
+          <span class="stat-label">Create</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">🚀</span>
+          <span class="stat-label">Publish</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Form Card -->
+    <div class="form-card">
+      <!-- Progress Steps -->
+      <div class="form-progress">
+        <div class="progress-step active" data-step="1">
+          <div class="step-number">1</div>
+          <div class="step-label">Draft</div>
+        </div>
+        <div class="progress-line"></div>
+        <div class="progress-step" data-step="2">
+          <div class="step-number">2</div>
+          <div class="step-label">Review</div>
+        </div>
+        <div class="progress-line"></div>
+        <div class="progress-step" data-step="3">
+          <div class="step-number">3</div>
+          <div class="step-label">Publish</div>
+        </div>
+      </div>
+
+      <!-- Creation Form -->
+      <form method="post" class="creation-form" id="creationForm" novalidate>
+        {% csrf_token %}
+        
+        <!-- Hidden fields container for form.as_p - we'll style each field individually -->
+        <div style="display: none;">
+          {{ form.as_p }}
+        </div>
+
+        <!-- Title Field -->
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-icon">📌</div>
+            <h2 class="section-title">Article Title</h2>
+            <span class="section-required">Required</span>
+          </div>
+          
+          <div class="input-group title-group">
+            <div class="input-wrapper">
+              <div class="input-decoration left-decoration">「</div>
+              {{ form.title }}
+              <div class="input-decoration right-decoration">」</div>
+            </div>
+            <div class="input-tips">
+              <div class="tip-badge">💡</div>
+              <span class="tip-text">Catchy, clear, and under 100 characters</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Author Field -->
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-icon">👤</div>
+            <h2 class="section-title">Author</h2>
+            <span class="section-required">already-taken</span>
+          </div>
+          
+          <div class="input-group author-group">
+            <div class="input-wrapper with-prefix">
+              <span class="input-prefix">by</span>
+              {{ form.author }}
+            </div>
+            <div class="input-tips">
+              <div class="tip-badge">✨</div>
+              <span class="tip-text">Your name or pen name</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Field -->
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-icon">📖</div>
+            <h2 class="section-title">Article Content</h2>
+            <span class="section-required">Required</span>
+          </div>
+          
+          <div class="input-group content-group">
+            <div class="textarea-toolbar">
+              <button type="button" class="toolbar-btn" title="Bold" onclick="insertFormat('**', '**')">
+                <strong>B</strong>
+              </button>
+              <button type="button" class="toolbar-btn" title="Italic" onclick="insertFormat('*', '*')">
+                <em>I</em>
+              </button>
+              <button type="button" class="toolbar-btn" title="Heading" onclick="insertFormat('# ', '')">
+                H
+              </button>
+              <button type="button" class="toolbar-btn" title="Link" onclick="insertLink()">
+                🔗
+              </button>
+              <button type="button" class="toolbar-btn" title="List" onclick="insertList()">
+                •
+              </button>
+              <button type="button" class="toolbar-btn" title="Quote" onclick="insertQuote()">
+                ❝
+              </button>
+              <button type="button" class="toolbar-btn" title="Code" onclick="insertCode()">
+                &lt;/&gt;
+              </button>
+            </div>
+            
+            {{ form.body }}
+            
+            <div class="textarea-footer">
+              <div class="word-counter">
+                <span class="counter-icon">📊</span>
+                <span class="counter-text" id="wordCount">0 words</span>
+              </div>
+              <div class="input-tips">
+                <div class="tip-badge">✍️</div>
+                <span class="tip-text">Minimum 50 words for better engagement</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optional Fields Section -->
+        <div class="form-section optional-section">
+          <div class="section-header">
+            <div class="section-icon">⚙️</div>
+            <h2 class="section-title">Additional Options</h2>
+            <span class="section-optional">Optional</span>
+          </div>
+          
+          <div class="options-grid">
+            <div class="option-item">
+              <label class="option-label">
+                <input type="checkbox" name="featured_image" class="option-checkbox">
+                <span class="option-checkbox-custom"></span>
+                <span class="option-text">Add featured image</span>
+              </label>
+            </div>
+            
+            <div class="option-item">
+              <label class="option-label">
+                <input type="checkbox" name="allow_comments" class="option-checkbox" checked>
+                <span class="option-checkbox-custom"></span>
+                <span class="option-text">Allow comments</span>
+              </label>
+            </div>
+            
+            <div class="option-item">
+              <label class="option-label">
+                <input type="checkbox" name="is_public" class="option-checkbox" checked>
+                <span class="option-checkbox-custom"></span>
+                <span class="option-text">Public article</span>
+              </label>
+            </div>
+            
+            <div class="option-item">
+              <div class="select-wrapper">
+                <select name="category" class="option-select">
+                  <option value="">Select category</option>
+                  <option value="tech">Technology</option>
+                  <option value="lifestyle">Lifestyle</option>
+                  <option value="travel">Travel</option>
+                  <option value="food">Food</option>
+                  <option value="other">Other</option>
+                </select>
+                <span class="select-arrow">▼</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-preview" onclick="previewArticle()">
+            <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18">
+              <path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+            </svg>
+            <span>Preview</span>
+          </button>
+          
+          <button type="button" class="btn btn-save-draft">
+            <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18">
+              <path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+            </svg>
+            <span>Save Draft</span>
+          </button>
+          
+          <button type="submit" class="btn btn-publish">
+            <span class="btn-text">Publish Now</span>
+            <svg class="btn-icon btn-icon-right" viewBox="0 0 24 24" width="18" height="18">
+              <path fill="currentColor" d="M5 4h14v2H5V4zm0 4h14v2H5V8zm0 4h14v2H5v-2zm0 4h10v2H5v-2z"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Writing Tips Section -->
+    <div class="writing-tips">
+      <div class="tips-header">
+        <span class="tips-icon">🎯</span>
+        <h3 class="tips-title">Writing Tips for Great Articles</h3>
+      </div>
+      
+      <div class="tips-carousel">
+        <div class="tip-slide">
+          <div class="tip-card">
+            <div class="tip-card-icon">📌</div>
+            <h4>Start Strong</h4>
+            <p>Hook your readers with an engaging first paragraph</p>
+          </div>
+        </div>
+        
+        <div class="tip-slide">
+          <div class="tip-card">
+            <div class="tip-card-icon">📊</div>
+            <h4>Use Subheadings</h4>
+            <p>Break content into scannable sections</p>
+          </div>
+        </div>
+        
+        <div class="tip-slide">
+          <div class="tip-card">
+            <div class="tip-card-icon">🖼️</div>
+            <h4>Add Visuals</h4>
+            <p>Include images, charts, or diagrams</p>
+          </div>
+        </div>
+        
+        <div class="tip-slide">
+          <div class="tip-card">
+            <div class="tip-card-icon">🔗</div>
+            <h4>Cite Sources</h4>
+            <p>Link to references and further reading</p>
+          </div>
+        </div>
+        
+        <div class="tip-slide">
+          <div class="tip-card">
+            <div class="tip-card-icon">✍️</div>
+            <h4>Edit Ruthlessly</h4>
+            <p>Remove fluff and tighten your writing</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal" id="previewModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Article Preview</h2>
+      <button class="modal-close" onclick="closePreview()">&times;</button>
+    </div>
+    <div class="modal-body" id="previewContent">
+      <!-- Preview content will be inserted here -->
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for enhanced functionality -->
+<script>
+  // Word counter
+  document.addEventListener('DOMContentLoaded', function() {
+    const bodyField = document.querySelector('textarea[name="body"]');
+    const wordCountSpan = document.getElementById('wordCount');
+    
+    if (bodyField && wordCountSpan) {
+      bodyField.addEventListener('input', function() {
+        const text = this.value.trim();
+        const words = text ? text.split(/\s+/).length : 0;
+        wordCountSpan.textContent = words + ' words';
+        
+        // Color code based on length
+        if (words < 50) {
+          wordCountSpan.style.color = '#f59e0b';
+        } else if (words >= 50) {
+          wordCountSpan.style.color = '#10b981';
+        }
+      });
+    }
+    
+    // Character counter for title
+    const titleField = document.querySelector('input[name="title"]');
+    if (titleField) {
+      titleField.addEventListener('input', function() {
+        const length = this.value.length;
+        const tipText = document.querySelector('.title-group .tip-text');
+        if (tipText) {
+          if (length > 100) {
+            tipText.innerHTML = `⚠️ Title too long (${length}/100)`;
+            tipText.style.color = '#ef4444';
+          } else {
+            tipText.innerHTML = `${length}/100 characters`;
+            tipText.style.color = '#64748b';
+          }
+        }
+      });
+    }
+  });
+  
+  // Text formatting functions
+  function insertFormat(before, after) {
+    const textarea = document.querySelector('textarea[name="body"]');
+    if (!textarea) return;
+    
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+    
+    textarea.value = text.substring(0, start) + before + selectedText + after + text.substring(end);
+    
+    // Set cursor position
+    const newPosition = end + before.length + after.length;
+    textarea.setSelectionRange(newPosition, newPosition);
+    textarea.focus();
+  }
+  
+  function insertLink() {
+    const textarea = document.querySelector('textarea[name="body"]');
+    if (!textarea) return;
+    
+    const url = prompt('Enter URL:', 'https://');
+    if (url) {
+      const text = textarea.value;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = text.substring(start, end) || 'link text';
+      
+      textarea.value = text.substring(0, start) + '[' + selectedText + '](' + url + ')' + text.substring(end);
+    }
+  }
+  
+  function insertList() {
+    insertFormat('\n- ', '\n');
+  }
+  
+  function insertQuote() {
+    insertFormat('\n> ', '\n');
+  }
+  
+  function insertCode() {
+    insertFormat('\n```\n', '\n```\n');
+  }
+  
+  // Preview functionality
+  function previewArticle() {
+    const title = document.querySelector('input[name="title"]').value;
+    const author = document.querySelector('input[name="author"]').value;
+    const body = document.querySelector('textarea[name="body"]').value;
+    
+    const previewHTML = `
+      <article class="preview-article">
+        <h1 class="preview-title">${title || 'Untitled'}</h1>
+        <p class="preview-meta">By ${author || 'Anonymous'}</p>
+        <div class="preview-body">${body.replace(/\n/g, '<br>')}</div>
+      </article>
+    `;
+    
+    document.getElementById('previewContent').innerHTML = previewHTML;
+    document.getElementById('previewModal').classList.add('show');
+  }
+  
+  function closePreview() {
+    document.getElementById('previewModal').classList.remove('show');
+  }
+  
+  // Close modal on outside click
+  window.onclick = function(event) {
+    const modal = document.getElementById('previewModal');
+    if (event.target == modal) {
+      closePreview();
+    }
+  }
+  
+  // Save draft functionality
+  document.querySelector('.btn-save-draft')?.addEventListener('click', function() {
+    // Show saving animation
+    this.classList.add('saving');
+    this.innerHTML = '<span class="btn-text">Saving...</span>';
+    
+    // Simulate save (replace with actual save logic)
+    setTimeout(() => {
+      this.classList.remove('saving');
+      this.innerHTML = '<svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg><span>Saved!</span>';
+      
+      setTimeout(() => {
+        this.innerHTML = '<svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg><span>Save Draft</span>';
+      }, 2000);
+    }, 1000);
+  });
+</script>
+{% endblock content %}

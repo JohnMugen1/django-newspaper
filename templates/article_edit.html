@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Edit Article | {{ form.title.value|truncatechars:30 }} {% endblock title %}
+
+
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/article_edit.css' %}">
+
+
+<div class="edit-wrapper">
+  <div class="edit-container">
+    <!-- Header Section -->
+    <div class="edit-header">
+      <div class="header-decoration">
+        <svg class="header-icon" viewBox="0 0 24 24" width="48" height="48">
+          <path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+        </svg>
+        <h1 class="edit-title">Edit Article</h1>
+        <p class="edit-subtitle">Make your changes below</p>
+      </div>
+      <div class="header-progress">
+        <span class="progress-step active">✎</span>
+        <span class="progress-line"></span>
+        <span class="progress-step">✓</span>
+      </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="edit-form-container">
+      <form method="post" class="edit-form" novalidate>
+        {% csrf_token %}
+        
+        {% for field in form %}
+        <div class="form-group {% if field.errors %}has-error{% endif %}">
+          <label for="{{ field.id_for_label }}" class="form-label">
+            {{ field.label }}
+            {% if field.field.required %}<span class="required-star">*</span>{% endif %}
+          </label>
+          
+          <div class="input-wrapper">
+            {% if field.name == 'title' %}
+              <div class="input-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path fill="currentColor" d="M5 4h14v2H5V4zm0 4h14v2H5V8zm0 4h14v2H5v-2zm0 4h10v2H5v-2z"/>
+                </svg>
+              </div>
+              {{ field }}
+            {% elif field.name == 'body' %}
+              <div class="textarea-wrapper">
+                {{ field }}
+                <div class="textarea-toolbar">
+                  <span class="toolbar-btn" title="Bold"><strong>B</strong></span>
+                  <span class="toolbar-btn" title="Italic"><em>I</em></span>
+                  <span class="toolbar-btn" title="Link">🔗</span>
+                  <span class="toolbar-btn" title="List">•</span>
+                </div>
+              </div>
+            {% elif field.name == 'author' %}
+              <div class="input-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+              </div>
+              {{ field }}
+            {% else %}
+              {{ field }}
+            {% endif %}
+          </div>
+          
+          {% if field.errors %}
+          <div class="error-messages">
+            {% for error in field.errors %}
+              <div class="error-item">
+                <svg class="error-icon" viewBox="0 0 24 24" width="16" height="16">
+                  <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+                {{ error }}
+              </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          
+          {% if field.help_text %}
+          <div class="help-text">
+            <svg class="help-icon" viewBox="0 0 24 24" width="14" height="14">
+              <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            {{ field.help_text }}
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <a href="{% url 'article_content' object.pk %}" class="btn btn-cancel">
+            <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18">
+              <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            <span>Cancel</span>
+          </a>
+          
+          <button type="submit" class="btn btn-submit">
+            <span class="btn-text">Update Article</span>
+            <svg class="btn-icon btn-icon-right" viewBox="0 0 24 24" width="18" height="18">
+              <path fill="currentColor" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="edit-tips">
+      <div class="tips-header">
+        <svg class="tips-icon" viewBox="0 0 24 24" width="20" height="20">
+          <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+        <span>Quick Tips</span>
+      </div>
+      <ul class="tips-list">
+        <li class="tip-item">
+          <span class="tip-bullet">✎</span>
+          Keep your title clear and concise
+        </li>
+        <li class="tip-item">
+          <span class="tip-bullet">📝</span>
+          Use paragraphs for better readability
+        </li>
+        <li class="tip-item">
+          <span class="tip-bullet">🔍</span>
+          Preview your changes before saving
+        </li>
+        <li class="tip-item">
+          <span class="tip-bullet">💡</span>
+          Add relevant details to engage readers
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock content %}
