@@ -44,7 +44,7 @@ Smooth animations and hover effects
 Custom CSS with beautiful typography (Inter font)
 
 ### 🚀 Live Demo
-View Live Demo (update with your actual URL)
+https://blogposts25.pythonanywhere.com/
 
 ### 🛠️ Tech Stack
 Backend: Django 5.0
